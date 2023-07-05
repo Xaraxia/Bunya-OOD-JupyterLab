@@ -3,16 +3,16 @@
 # @note Used to define the submitted cluster, title, description, and
 #   hard-coded/user-defined attributes that make up this Batch Connect app.
 ---
-
 # **MUST** set cluster id here that matches cluster configuration file located
 # under /etc/ood/config/clusters.d/*.yml
 # @example Use the Owens cluster at Ohio Supercomputer Center
 #     cluster: "owens"
-cluster: "delta"
+cluster: "bunya"
 
 # Define attribute values that aren't meant to be modified by the user within
 # the Dashboard form
 attributes:
+  cluster: "bunya"
   # Set the corresponding modules that need to be loaded for Jupyter to run
   #
   # @note It is called within the batch job as `module load <modules>` if
@@ -25,34 +25,54 @@ attributes:
   #     modules: "python/3.5"
   # @example Using combination of modules
   #     modules: "python/3.5 cuda/8.0.44"
-  
-  bc_account:
-    label: "Name of account"
-    widget: "text_field"
-    value: ""
-  
-  bc_reservation:
-    label: "Name of reservation (leave empty if none)"
-    widget: "text_field"
-    value: ""
 
-  bc_partition:
-    label: "Partition"
+  modules:
+    label: "Base jupyter environment"
     widget: "select"
-    value: "cpu-interactive"
-    help: "Interactive partitions are limited to 30 minutes."
+    value: "jupyterlab"
+    help: "Which environment did you want?"
     options:
-      - ["cpu-interactive","cpu-interactive"]
-      - ["gpuA100x4-interactive","gpuA100x4-interactive"]
-      - ["gpuA40x4-interactive","gpuA40x4-interactive"]
-      - ["cpu","cpu"]
-      - ["gpuA100x4","gpuA100x4"]
-      - ["gpuA40x4","gpuA40x4"]
+      - ["Jupyter", "jupyterlab", data-option-for-auto-queues-gpu: false, data-hide-custom-environment: true] 
+      - ["Jupyter + CUDA", "jupyterlab cuda", data-option-for-auto-queues-general: false, data-hide-custom-environment: true] 
+      - ["Jupyter + ROCm", "jupyterlab rocm", data-option-for-auto-queues-ai: false, data-option-for-auto-queues-general: false, data-option-for-auto-queues-aibn-omara: false, data-hide-custom-environment: true] 
+      - ["Custom (advanced only) - build environment below", "", ]
+
+  custom_environment:
+    widget: text_area
+    label: Environment Setup for Custom Python & Jupyter
+    help: "Enter commands (module load, source activate, etc) to create your desired Jupyter environment; jupyter MUST be on your path and either notebook or jupyterlab installed in your Python environment."
+    value: |
+        module load jupyterlab
+
+  extra_modules:
+    label: "Additional modules to load"
+    widget: "text_field"
+    help: "Modules to load in addition to the list above. For example (note: these won't actually work with the installed version of jupyterlab): \"biopython/1.79-foss-2021a scipy-bundle/2021.05-foss-2021a\" "
+
+  extra_jupyter_args: ""
+
+  jupyter_interface:
+    widget: select
+    label: "Jupyter interface"
+    value: "lab"
+    options:
+      - [ "Notebook", "notebook" ]
+      - [ "Lab", "lab" ]
+
+#  bc_account:
+#    label: "Name of account"
+#    widget: "text_field"
+#    value: ""
+  
+#  bc_reservation:
+#    label: "Name of reservation (leave empty if none)"
+#    widget: "text_field"
+#    value: ""
 
   bc_num_slots:
     label: "Number of CPUs"
     widget: "number_field"
-    min: "1"
+    min: "2"
 
   bc_num_memory:
     label: "Amount of RAM"
@@ -62,8 +82,9 @@ attributes:
   bc_num_gpus:
     label: "Number of GPUs"
     widget: "number_field"
-#    max: "4"
+    max: "3"
     min: "0"
+    help: "Use the minimum number of GPUs required"
 
   bc_duration:
     label: "Duration of job"
@@ -80,11 +101,16 @@ attributes:
 #   option, then it will not appear in the form page that the user sees in the
 #   Dashboard
 form:
-  - bc_account
-  - bc_partition
+  - auto_accounts
+  - auto_queues
+  - modules
+  - custom_environment
+  - extra_modules
+  - jupyter_interface
+  - extra_jupyter_args
   - bc_duration
-  - bc_reservation
   - bc_num_slots
   - bc_num_memory
   - bc_num_gpus
-  - bc_email_on_started
+#  - bc_reservation
+#  - bc_email_on_started

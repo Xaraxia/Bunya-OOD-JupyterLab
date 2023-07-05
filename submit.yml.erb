@@ -30,9 +30,9 @@ batch_connect:
 #  email_on_started: true
 #  native: # ... array of command line arguments ...
 script:
-  accounting_id: "<%= bc_account %>"
-  queue_name: "<%= bc_partition %>"
-  email_on_started: <%= bc_email_on_started %>
+  accounting_id: "<%= auto_accounts %>"
+  queue_name: "<%= auto_queues %>"
+  email_on_started: <%= bc_email_on_started or false %>
   native:
     - "-N 1"
     - "-n"

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Increased verbosity of output to make debugging easier.
 - Does not launch template script as login shell anymore to speed up load time.
+- Tweaked for UQ usage
 
 ### Fixed
 - Fix job not ending if forked processes still running.

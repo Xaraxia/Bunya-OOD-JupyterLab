@@ -1,7 +1,7 @@
 ---
-name: Jupyter Lab
+name: Jupyter
 category: Interactive Apps
-subcategory: Jupyter
+subcategory: Python
 role: batch_connect
 description: |
-  This app will launch a Jupyter Lab server on one compute node.
+  This app will launch a Jupyter (Lab or Notebook) server on one compute node.
